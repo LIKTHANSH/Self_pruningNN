@@ -51,7 +51,7 @@ def get_train_transforms() -> transforms.Compose:
     """
     return transforms.Compose([
         transforms.RandomCrop(32, padding=4),
-        transforms.RandomHorizontalFlip(p=0.5),
+        transforms.RandomHorizontalFlip(),
         transforms.ToTensor(),
         transforms.Normalize(CIFAR10_MEAN, CIFAR10_STD),
     ])

@@ -84,8 +84,8 @@ Examples:
         """
     )
     parser.add_argument(
-        '--epochs', type=int, default=50,
-        help='Number of training epochs (default: 50)'
+        '--epochs', type=int, default=60,
+        help='Number of training epochs (default: 60)'
     )
     parser.add_argument(
         '--batch-size', type=int, default=128,
@@ -97,8 +97,8 @@ Examples:
     )
     parser.add_argument(
         '--lambdas', type=float, nargs='+',
-        default=[1e-5, 1e-4, 1e-3],
-        help='List of lambda values to experiment with (default: 1e-5 1e-4 1e-3)'
+        default=[1e-4, 1e-3, 5e-3],
+        help='List of lambda values to experiment with (default: 1e-4 1e-3 5e-3)'
     )
     parser.add_argument(
         '--seed', type=int, default=42,

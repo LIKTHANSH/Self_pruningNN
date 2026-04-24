@@ -1,118 +1,118 @@
 {
-  "1e-06": {
-    "lambda": 1e-06,
-    "best_accuracy": 61.58,
-    "sparsity": 0.0,
-    "active_params": 3835136,
-    "total_params": 7676042,
-    "per_layer_sparsity": [
-      {
-        "name": "PrunableLinear_0 (3072\u21921024)",
-        "sparsity": 0.0,
-        "total": 3145728,
-        "pruned": 0
-      },
-      {
-        "name": "PrunableLinear_1 (1024\u2192512)",
-        "sparsity": 0.0,
-        "total": 524288,
-        "pruned": 0
-      },
-      {
-        "name": "PrunableLinear_2 (512\u2192256)",
-        "sparsity": 0.0,
-        "total": 131072,
-        "pruned": 0
-      },
-      {
-        "name": "PrunableLinear_3 (256\u2192128)",
-        "sparsity": 0.0,
-        "total": 32768,
-        "pruned": 0
-      },
-      {
-        "name": "PrunableLinear_4 (128\u219210)",
-        "sparsity": 0.0,
-        "total": 1280,
-        "pruned": 0
-      }
-    ]
-  },
-  "1e-05": {
-    "lambda": 1e-05,
-    "best_accuracy": 61.629999999999995,
-    "sparsity": 0.0,
-    "active_params": 3835136,
-    "total_params": 7676042,
-    "per_layer_sparsity": [
-      {
-        "name": "PrunableLinear_0 (3072\u21921024)",
-        "sparsity": 0.0,
-        "total": 3145728,
-        "pruned": 0
-      },
-      {
-        "name": "PrunableLinear_1 (1024\u2192512)",
-        "sparsity": 0.0,
-        "total": 524288,
-        "pruned": 0
-      },
-      {
-        "name": "PrunableLinear_2 (512\u2192256)",
-        "sparsity": 0.0,
-        "total": 131072,
-        "pruned": 0
-      },
-      {
-        "name": "PrunableLinear_3 (256\u2192128)",
-        "sparsity": 0.0,
-        "total": 32768,
-        "pruned": 0
-      },
-      {
-        "name": "PrunableLinear_4 (128\u219210)",
-        "sparsity": 0.0,
-        "total": 1280,
-        "pruned": 0
-      }
-    ]
-  },
   "0.0001": {
     "lambda": 0.0001,
-    "best_accuracy": 61.72,
-    "sparsity": 0.0,
-    "active_params": 3835136,
+    "best_accuracy": 62.39,
+    "sparsity": 97.69953399305787,
+    "active_params": 88226,
     "total_params": 7676042,
     "per_layer_sparsity": [
       {
         "name": "PrunableLinear_0 (3072\u21921024)",
-        "sparsity": 0.0,
+        "sparsity": 99.06644821166992,
         "total": 3145728,
-        "pruned": 0
+        "pruned": 3116361
       },
       {
         "name": "PrunableLinear_1 (1024\u2192512)",
-        "sparsity": 0.0,
+        "sparsity": 94.04468536376953,
         "total": 524288,
-        "pruned": 0
+        "pruned": 493065
       },
       {
         "name": "PrunableLinear_2 (512\u2192256)",
-        "sparsity": 0.0,
+        "sparsity": 85.78643798828125,
         "total": 131072,
-        "pruned": 0
+        "pruned": 112442
       },
       {
         "name": "PrunableLinear_3 (256\u2192128)",
-        "sparsity": 0.0,
+        "sparsity": 75.616455078125,
         "total": 32768,
-        "pruned": 0
+        "pruned": 24778
       },
       {
         "name": "PrunableLinear_4 (128\u219210)",
-        "sparsity": 0.0,
+        "sparsity": 20.625,
         "total": 1280,
-        "pruned": 0
+        "pruned": 264
+      }
+    ]
+  },
+  "0.001": {
+    "lambda": 0.001,
+    "best_accuracy": 61.260000000000005,
+    "sparsity": 99.98041790434552,
+    "active_params": 751,
+    "total_params": 7676042,
+    "per_layer_sparsity": [
+      {
+        "name": "PrunableLinear_0 (3072\u21921024)",
+        "sparsity": 99.99850591023764,
+        "total": 3145728,
+        "pruned": 3145681
+      },
+      {
+        "name": "PrunableLinear_1 (1024\u2192512)",
+        "sparsity": 99.99752044677734,
+        "total": 524288,
+        "pruned": 524275
+      },
+      {
+        "name": "PrunableLinear_2 (512\u2192256)",
+        "sparsity": 99.99771118164062,
+        "total": 131072,
+        "pruned": 131069
+      },
+      {
+        "name": "PrunableLinear_3 (256\u2192128)",
+        "sparsity": 98.9837646484375,
+        "total": 32768,
+        "pruned": 32435
+      },
+      {
+        "name": "PrunableLinear_4 (128\u219210)",
+        "sparsity": 72.265625,
+        "total": 1280,
+        "pruned": 925
+      }
+    ]
+  },
+  "0.005": {
+    "lambda": 0.005,
+    "best_accuracy": 60.0,
+    "sparsity": 99.99421141779588,
+    "active_params": 222,
+    "total_params": 7676042,
+    "per_layer_sparsity": [
+      {
+        "name": "PrunableLinear_0 (3072\u21921024)",
+        "sparsity": 100.0,
+        "total": 3145728,
+        "pruned": 3145728
+      },
+      {
+        "name": "PrunableLinear_1 (1024\u2192512)",
+        "sparsity": 100.0,
+        "total": 524288,
+        "pruned": 524288
+      },
+      {
+        "name": "PrunableLinear_2 (512\u2192256)",
+        "sparsity": 100.0,
+        "total": 131072,
+        "pruned": 131072
+      },
+      {
+        "name": "PrunableLinear_3 (256\u2192128)",
+        "sparsity": 99.8138427734375,
+        "total": 32768,
+        "pruned": 32707
+      },
+      {
+        "name": "PrunableLinear_4 (128\u219210)",
+        "sparsity": 87.421875,
+        "total": 1280,
+        "pruned": 1119
       }
     ]
   }

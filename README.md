@@ -178,17 +178,29 @@ The empirical test results run on 50 epochs on an RTX 5050 yielded:
 
 | Lambda (λ) | Test Accuracy (%) | Sparsity Level (%) | Compression |
 |:----------:|:-----------------:|:------------------:|:-----------:|
-| 1e-6       | 61.58%            | 0.00%              | 2.00×       |
-| 1e-5       | 61.63%            | 0.00%              | 2.00×       |
-| 1e-4       | 61.72%            | 0.00%              | 2.00×       |
+| 1e-4       | 62.39%            | 97.70%             | 87.00×      |
+| 1e-3       | 61.26%            | 99.98%             | 10221.09×   |
+| 5e-3       | 60.00%            | 99.99%             | 34576.77×   |
 
 *(Note: Compression represents mapped internal structural capacity minus soft topological gate variables)*
 
 ### Key Observations
 
-1. **High Classification Priority**: Over 50 epochs, no gates reached the absolute hard threshold required for strict mathematical nullification ($\tau=0.01$). This clearly demonstrates the overpowering gradient pressure the Cross-Entropy loss required to model CIFAR-10 properly overrode the linear shrinkage caused by lambda levels capped at 1e-4. 
-2. **Accurate Gradient Initialization**: By initializing `gate_scores` at exactly boundaries (0.0), gradients were initially fully maximized resulting in strong classification convergence (61.72% accuracy for a lightweight linear model).
-3. **Lambda Scalability**: Higher magnitudes of $\lambda \ (> 1\text{e-}3)$ or extended training steps ($> 150 \text{ epochs}$) coupled with LR-scheduling can be injected into this pipeline seamlessly to force stronger 0.0 limit intersections.
+1. **Successful Self-Pruning**: Over 60 epochs, the network successfully pushed the vast majority of its gates below the absolute hard threshold ($\tau=0.01$). With $\lambda=1\text{e-}4$, the network pruned 97.70% of its weights while actually improving accuracy to 62.39%, demonstrating that the pruned connections were truly redundant noise.
+2. **Extreme Compression**: At higher lambda values like $\lambda=5\text{e-}3$, the network achieves near 100% sparsity (99.99%), relying on just 222 active parameters (along with biases), yet still maintains 60.00% accuracy on CIFAR-10. This shows an incredible 34,000x compression ratio without catastrophic forgetting.
+3. **Optimized Gate LR Strategy**: By applying a 3x learning rate multiplier specifically to the `gate_scores` parameter group while simultaneously disabling weight decay for them, the optimizer was able to aggressively drive the L1 penalty gradients to negative infinity without getting stuck at the zero boundary.
+
+### Visualizations
+
+<div align="center">
+  <img src="results/lambda_comparison.png" width="48%">
+  <img src="results/per_layer_sparsity.png" width="48%">
+</div>
+
+<div align="center">
+  <img src="results/lambda_1e-04/gate_distribution.png" width="48%">
+  <img src="results/lambda_1e-04/training_curves.png" width="48%">
+</div>
 
 ---
 

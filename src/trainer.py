@@ -122,15 +122,34 @@ class Trainer:
         self.criterion = nn.CrossEntropyLoss()
 
         # ---------------------------------------------------------------
-        # Optimizer: Adam with weight decay
-        # Adam is chosen for its adaptive learning rates, which work well
-        # with the heterogeneous parameter types (weights vs. gate scores).
+        # Optimizer: Adam with per-parameter-group configuration
+        #
+        # Three parameter groups with different settings:
+        #   1. Weights: standard weight decay for regularization
+        #   2. Gate scores: NO weight decay + HIGHER learning rate (3×)
+        #      - No weight decay: prevents pulling gates to 0 (sigmoid=0.5)
+        #      - Higher LR: allows gate_scores to be pushed to large negative
+        #        values faster, achieving sigmoid(g) < 0.01 for true pruning
+        #   3. Other (biases, BatchNorm): no weight decay, base LR
         # ---------------------------------------------------------------
-        self.optimizer = optim.Adam(
-            model.parameters(),
-            lr=learning_rate,
-            weight_decay=weight_decay,
-        )
+        weight_params = []
+        gate_params = []
+        other_params = []
+        for name, param in model.named_parameters():
+            if not param.requires_grad:
+                continue
+            if "gate_score" in name:
+                gate_params.append(param)
+            elif "bias" in name or "weight" not in name:
+                other_params.append(param)
+            else:
+                weight_params.append(param)
+
+        self.optimizer = optim.Adam([
+            {'params': weight_params, 'weight_decay': weight_decay},
+            {'params': gate_params, 'weight_decay': 0.0, 'lr': learning_rate * 3},
+            {'params': other_params, 'weight_decay': 0.0},
+        ], lr=learning_rate)
 
         # ---------------------------------------------------------------
         # Learning Rate Scheduler: Cosine Annealing
@@ -192,7 +211,7 @@ class Trainer:
             total_loss.backward()
 
             # Gradient clipping for training stability
-            torch.nn.utils.clip_grad_norm_(self.model.parameters(), max_norm=1.0)
+            torch.nn.utils.clip_grad_norm_(self.model.parameters(), max_norm=5.0)
 
             # Update parameters
             self.optimizer.step()

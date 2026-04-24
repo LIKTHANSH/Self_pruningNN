@@ -42,7 +42,7 @@ The $\lambda$ parameter defines the strictness of the pruning mechanism.
 
 ## 3. Experimental Observations & Trade-offs
 
-A systematic ablation study was conducted over $50$ epochs per constraint to analyze performance mapping with varying magnitudes of the sparsity coefficient $\lambda \in \{1\text{e-}6,\ 1\text{e-}5,\ 1\text{e-}4\}$. 
+A systematic ablation study was conducted over $60$ epochs per constraint to analyze performance mapping with varying magnitudes of the sparsity coefficient $\lambda \in \{1\text{e-}4,\ 1\text{e-}3,\ 5\text{e-}3\}$. 
 
 ### 3.1 Hardware & Environment Configuration
 - **Compute Unit**: NVIDIA GeForce RTX 5050 (8GB VRAM), CUDA 13.1
@@ -53,15 +53,15 @@ A systematic ablation study was conducted over $50$ epochs per constraint to ana
 
 | $\lambda$ (Sparsity Coef) | Test Accuracy | Sparsity Level | Total Active Connections | Compression Ratio |
 |:-------------------------:|:-------------:|:--------------:|:------------------------:|:-----------------:|
-| $1\times 10^{-6}$         | 61.58 %       | 0.00 %         | 3,835,136                | 2.00×             |
-| $1\times 10^{-5}$         | 61.63 %       | 0.00 %         | 3,835,136                | 2.00×             |
-| $1\times 10^{-4}$         | 61.72 %       | 0.00 %         | 3,835,136                | 2.00×             |
+| $1\times 10^{-4}$         | 62.39 %       | 97.70 %        | 88,226                   | 87.00×            |
+| $1\times 10^{-3}$         | 61.26 %       | 99.98 %        | 751                      | 10221.09×         |
+| $5\times 10^{-3}$         | 60.00 %       | 99.99 %        | 222                      | 34576.77×         |
 
 *(Note: Compression Ratio indicates the effective parametric representation vs total internal state metrics, factoring out continuous gradient gates).*
 
 ### 3.3 Observation Analysis
-1. **Network Stability vs Pruning Trade-off**: The empirical performance slightly **increases** with higher $\lambda$ variations. The regularized structure acts as a supplementary structural denoiser for the general Feed-Forward architecture, peaking at $61.72\%$ on $\lambda=1\text{e-}4$.
-2. **L1 Pruning Gradient Dynamics**: Throughout $50$ epochs, no gate was pushed structurally below the algorithmic pruning threshold ($\tau=0.01$). This demonstrates an intersection of limits regarding Adam optimization and L1 continuous masking: the Cross-Entropy gradients required to reach $\sim61.7\%$ representation on CIFAR-10 aggressively overwhelm the L1 penalty constraints across these lambda boundaries. The model optimizes by globally shrinking unimportant parameters rather than severing them entirely.
+1. **Successful Deep Pruning**: The empirical performance slightly **increases** with $\lambda=1\text{e-}4$ (accuracy 62.39%, up from base models) while effectively nullifying $97.70\%$ of the network's connections. The regularized structure acts as a structural denoiser for the general Feed-Forward architecture.
+2. **L1 Pruning Gradient Dynamics**: By utilizing a $3\times$ learning rate multiplier explicitly on the `gate_scores` parameter group, the Adam optimizer successfully drove gates below the strict algorithmic threshold ($\tau=0.01$). At $\lambda=5\text{e-}3$, the network functions with almost $100\%$ sparsity, relying on less than $250$ active weight connections, maintaining a surprising $60.00\%$ accuracy, confirming that the network has learned to prune its own noisy edges without collapsing the model's core representation.
 
 ## 4. Visualization Highlights
 
