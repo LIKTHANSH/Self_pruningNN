@@ -9,7 +9,7 @@ designed for image classification on CIFAR-10 (32x32x3 = 3072 input features,
 10 output classes).
 
 Architecture Design Choices:
-    - Four hidden layers with decreasing width: 512 → 256 → 128 → 64
+    - Four hidden layers with decreasing width: 1024 -> 512 -> 256 -> 128
     - BatchNorm after each hidden layer for training stability
     - ReLU activations for non-linearity
     - Dropout (0.2) for additional regularization
@@ -38,11 +38,11 @@ class SelfPruningNetwork(nn.Module):
     network to prune unimportant connections during training.
 
     Architecture:
-        Input (3072) → PrunableLinear(512) → BN → ReLU → Dropout
-                     → PrunableLinear(256) → BN → ReLU → Dropout
-                     → PrunableLinear(128) → BN → ReLU → Dropout
-                     → PrunableLinear(64)  → BN → ReLU → Dropout
-                     → PrunableLinear(10)  → Output (logits)
+        Input (3072) -> PrunableLinear(1024) -> BN -> ReLU -> Dropout
+                     -> PrunableLinear(512)  -> BN -> ReLU -> Dropout
+                     -> PrunableLinear(256)  -> BN -> ReLU -> Dropout
+                     -> PrunableLinear(128)  -> BN -> ReLU -> Dropout
+                     -> PrunableLinear(10)   -> Output (logits)
 
     Args:
         input_dim (int): Dimensionality of input features. Default: 3072 (CIFAR-10).
@@ -66,7 +66,7 @@ class SelfPruningNetwork(nn.Module):
         # Hidden dims chosen to provide sufficient capacity for CIFAR-10
         # while being tractable for the pruning mechanism to work with.
         # ---------------------------------------------------------------
-        hidden_dims = [512, 256, 128, 64]
+        hidden_dims = [1024, 512, 256, 128]
 
         layers = []
         prev_dim = input_dim

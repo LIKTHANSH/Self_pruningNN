@@ -45,12 +45,18 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from src.data import load_cifar10
 from src.network import SelfPruningNetwork
 from src.trainer import Trainer
-from src.visualization import (
-    plot_gate_distribution,
-    plot_training_curves,
-    plot_lambda_comparison,
-    plot_per_layer_sparsity,
-)
+
+# Visualization imports (optional — may fail on systems with DLL restrictions)
+try:
+    from src.visualization import (
+        plot_gate_distribution,
+        plot_training_curves,
+        plot_lambda_comparison,
+        plot_per_layer_sparsity,
+    )
+    HAS_PLOTTING = True
+except (ImportError, OSError):
+    HAS_PLOTTING = False
 
 
 def set_seed(seed: int = 42):
@@ -199,15 +205,32 @@ def run_experiment(
     lambda_dir = os.path.join(results_dir, f"lambda_{lambda_val:.0e}")
     os.makedirs(lambda_dir, exist_ok=True)
 
-    plot_gate_distribution(
-        model, lambda_val,
-        os.path.join(lambda_dir, "gate_distribution.png"),
-    )
+    # Save model state for deferred plotting
+    torch.save(model.state_dict(), os.path.join(lambda_dir, "model_state.pt"))
 
-    plot_training_curves(
-        tracker, lambda_val,
-        os.path.join(lambda_dir, "training_curves.png"),
-    )
+    # Save tracker data for deferred plotting
+    import pickle
+    with open(os.path.join(lambda_dir, "tracker.pkl"), 'wb') as f:
+        pickle.dump({
+            'train_losses': tracker.train_losses,
+            'cls_losses': tracker.cls_losses,
+            'sparsity_losses': tracker.sparsity_losses,
+            'test_accuracies': tracker.test_accuracies,
+            'sparsity_levels': tracker.sparsity_levels,
+            'per_layer_sparsity': tracker.per_layer_sparsity,
+            'epoch_times': tracker.epoch_times,
+        }, f)
+
+    if HAS_PLOTTING:
+        plot_gate_distribution(
+            model, lambda_val,
+            os.path.join(lambda_dir, "gate_distribution.png"),
+        )
+
+        plot_training_curves(
+            tracker, lambda_val,
+            os.path.join(lambda_dir, "training_curves.png"),
+        )
 
     # Print per-layer sparsity details
     print(f"\n  Per-Layer Sparsity Breakdown:")
@@ -304,32 +327,32 @@ def main():
 
     total_time = time.time() - total_start
 
-    # ---------------------------------------------------------------
-    # Generate comparison plots
-    # ---------------------------------------------------------------
-    print(f"\n{'━'*80}")
-    print(f"  GENERATING COMPARISON VISUALIZATIONS")
-    print(f"{'━'*80}")
+    if HAS_PLOTTING:
+        print(f"\n{'━'*80}")
+        print(f"  GENERATING COMPARISON VISUALIZATIONS")
+        print(f"{'━'*80}")
 
-    # Prepare results dict without non-serializable items
-    plot_results = {
-        lam: {
-            'accuracy': r['accuracy'],
-            'sparsity': r['sparsity'],
-            'layer_info': r['layer_info'],
+        # Prepare results dict without non-serializable items
+        plot_results = {
+            lam: {
+                'accuracy': r['accuracy'],
+                'sparsity': r['sparsity'],
+                'layer_info': r['layer_info'],
+            }
+            for lam, r in all_results.items()
         }
-        for lam, r in all_results.items()
-    }
 
-    plot_lambda_comparison(
-        plot_results,
-        os.path.join(results_dir, "lambda_comparison.png"),
-    )
+        plot_lambda_comparison(
+            plot_results,
+            os.path.join(results_dir, "lambda_comparison.png"),
+        )
 
-    plot_per_layer_sparsity(
-        plot_results,
-        os.path.join(results_dir, "per_layer_sparsity.png"),
-    )
+        plot_per_layer_sparsity(
+            plot_results,
+            os.path.join(results_dir, "per_layer_sparsity.png"),
+        )
+    else:
+        print(f"\n  [INFO] Plotting skipped. Run 'python generate_plots.py' to generate plots.")
 
     # ---------------------------------------------------------------
     # Print final summary
@@ -371,7 +394,7 @@ def main():
 
     # Save markdown table
     table_path = os.path.join(results_dir, "results_table.md")
-    with open(table_path, 'w') as f:
+    with open(table_path, 'w', encoding='utf-8') as f:
         f.write("# Self-Pruning Neural Network — Experiment Results\n\n")
         f.write(table_str)
         f.write(f"\n\n*Trained on CIFAR-10 for {args.epochs} epochs per λ value.*\n")

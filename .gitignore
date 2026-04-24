@@ -19,11 +19,11 @@ env/
 *.swp
 *.swo
 
-# Data & Results (regeneratable)
+# Data (regeneratable)
 data/
-results/
 *.pt
 *.pth
+*.pkl
 
 # OS
 .DS_Store
